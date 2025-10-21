@@ -1,133 +1,140 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Happy Birthday Em!</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* Reset & font */
     *{box-sizing:border-box;margin:0;padding:0}
     body{
       height:100vh;
-      background:linear-gradient(135deg,#ffe4f1 0%, #ffc2e0 100%);
+      background:linear-gradient(135deg,#ffe4f1 0%,#ffc2e0 100%);
       font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
-      overflow:hidden;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      color:#fff;
+      overflow:hidden;display:flex;align-items:center;justify-content:center;
+      text-align:center;color:#fff;
     }
-    /* Hộp nội dung */
     .card{
-      background:rgba(255,255,255,.25);
-      backdrop-filter:blur(10px);
-      border-radius:20px;
-      padding:40px 30px;
-      max-width:90%;
-      width:420px;
-      box-shadow:0 8px 32px rgba(0,0,0,.15);
-      animation:fadeIn 1.2s ease;
+      background:rgba(255,255,255,.25);backdrop-filter:blur(10px);
+      border-radius:20px;padding:40px 30px;max-width:90%;width:420px;
+      box-shadow:0 8px 32px rgba(0,0,0,.15);animation:fadeIn 1.2s ease;
     }
     h1{font-size:2.2em;margin-bottom:15px}
     p{font-size:1.1em;margin-bottom:25px;line-height:1.5}
     .btn{
-      display:inline-block;
-      background:#ff4d84;
-      color:#fff;
-      padding:12px 28px;
-      border:none;border-radius:30px;
-      font-size:1em;cursor:pointer;
-      transition:.3s;
+      display:inline-block;background:#ff4d84;color:#fff;
+      padding:12px 28px;border:none;border-radius:30px;font-size:1em;cursor:pointer;transition:.3s;
     }
     .btn:hover{background:#ff1f69;transform:scale(1.05)}
-    /* Ảnh tròn */
-    .avatar{
-      width:130px;height:130px;
-      border-radius:50%;
-      object-fit:cover;
-      border:4px solid #fff;
-      margin-bottom:20px;
-    }
-    /* Bong bóng bay */
-    .balloon{
-      position:absolute;
-      width:90px;height:120px;
-      border-radius:80% 80% 80% 80%;
-      background:#ff4d84;
-      opacity:.75;
-      animation:float 7s ease-in-out infinite;
-    }
+    .avatar{width:130px;height:130px;border-radius:50%;object-fit:cover;border:4px solid #fff;margin-bottom:20px}
+    /* Bong bóng */
+    .balloon{position:absolute;width:90px;height:120px;border-radius:80%;background:#ff4d84;opacity:.75;animation:float 7s ease-in-out infinite}
     .balloon:nth-child(1){left:10%;background:#ff8fa3;animation-duration:6s}
     .balloon:nth-child(2){left:30%;background:#ffb3c1;animation-duration:8s;animation-delay:1s}
     .balloon:nth-child(3){right:30%;background:#ffccd5;animation-duration:7s;animation-delay:2s}
     .balloon:nth-child(4){right:10%;background:#ff8fa3;animation-duration:9s}
-
-    @keyframes float{
-      0%,100%{transform:translateY(0) rotate(-3deg)}
-      50%{transform:translateY(-60vh) rotate(3deg)}
-    }
-    @keyframes fadeIn{
-      from{opacity:0;transform:scale(.9)}
-      to{opacity:1;transform:scale(1)}
-    }
-    /* Nhạc nền tự động (tùy chọn) */
+    @keyframes float{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-60vh) rotate(3deg)}}
+    @keyframes fadeIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+    /* Game */
+    #gameArea{user-select:none}
+    #timer{font-size:1em;margin:10px 0}
+    .heart-click{position:absolute;font-size:28px;color:#ff4d84;cursor:pointer;animation:fall 2s linear forwards}
+    @keyframes fall{to{transform:translateY(100vh) rotate(360deg)}}
+    /* Nhạc */
     audio{position:fixed;bottom:10px;right:10px;opacity:.6}
   </style>
 </head>
 <body>
   <!-- 4 trái bóng -->
-  <div class="balloon"></div>
-  <div class="balloon"></div>
-  <div class="balloon"></div>
-  <div class="balloon"></div>
+  <div class="balloon"></div><div class="balloon"></div><div class="balloon"></div><div class="balloon"></div>
 
-  <!-- Thẻ nội dung -->
   <div class="card">
     <img src="https://i.postimg.cc/T1zsTPK5/z7139916524743-2aadef1743d23a3834ab14c428c671cf.jpg" alt="avatar" class="avatar"/>
-    <h1>Happy Birthday, <span id="name">Bé iu</span>!</h1>
+    <h1>Happy Birthday, <span id="name">Lan Béo</span>!</h1>
     <p>Chúc em tuổi mới luôn cười thật tươi, học giỏi, xinh đẹp và bên anh mãi nhé!</p>
-    <button class="btn" onclick="showHeart()">Nhấn để nhận ♥</button>
+
+    <!-- Mini-game -->
+    <div id="gameArea">
+      <p id="quest">🎁 Em hãy click đúng 10 trái tim trong 7 giây để mở quà nhé!</p>
+      <div id="timer">Thời gian: <span id="countDown">7</span>s | Đã đủ: <span id="score">0</span>/10 ❤</div>
+      <button id="startBtn" class="btn" onclick="startGame()">Bắt đầu</button>
+    </div>
   </div>
 
-  <!-- Nhạc nền (tải file mp3 của bạn lên drive/gh rồi thay link) -->
-  <audio id="bgm" loop autoplay>
+  <!-- Nhạc nền + nút tắt/mở -->
+  <audio id="bgm" loop>
     <source src="https://cdn.pixabay.com/download/audio/2022/02/21/audio_2c08bbed9c.mp3?filename=happy-birthday-to-you-piano-5527.mp3" type="audio/mpeg">
-    Trình duyệt không hỗ trợ audio.
   </audio>
+  <button onclick="toggleMusic()" style="position:fixed;bottom:10px;right:10px;background:#fff3;border:none;border-radius:50%;width:45px;height:45px;font-size:20px;cursor:pointer" title="Nhạc nền">🎵</button>
 
+  <!-- Scripts -->
   <script>
-    // Thay tên bạn gái
-    document.getElementById('name').textContent = 'Lan Béo';
+    // Tự động play nhạc sau click đầu tiên
+    document.addEventListener('click',function autoplay(){
+      document.getElementById('bgm').play();
+      document.removeEventListener('click',autoplay);
+    },{once:true});
+    function toggleMusic(){
+      const a=document.getElementById('bgm');
+      a.paused ? a.play() : a.pause();
+    }
 
-    // Tạo hiệu ứng trái tim bay lên khi nhấn nút
-    function showHeart(){
-      for(let i=0;i<30;i++){
-        createHeart();
+    // ----- mini-game -----
+    const TARGET = 10, TIME = 7;
+    let score = 0, timeLeft = TIME, interval, spawnInterval;
+
+    function startGame(){
+      score = 0; timeLeft = TIME;
+      document.getElementById('score').textContent = 0;
+      document.getElementById('startBtn').style.display = 'none';
+      document.getElementById('quest').textContent = 'Nhanh tay lên nào!';
+      interval = setInterval(()=>{
+        timeLeft--;
+        document.getElementById('countDown').textContent = timeLeft;
+        if(timeLeft <= 0) endGame(false);
+      }, 1000);
+      spawnInterval = setInterval(spawnHeart, 400);
+    }
+    function spawnHeart(){
+      const h = document.createElement('div');
+      h.innerHTML = '❤';
+      h.className = 'heart-click';
+      h.style.left = Math.random()*90 + '%';
+      h.style.top  = '-40px';
+      document.body.appendChild(h);
+      h.onclick = () => catchHeart(h);
+    }
+    function catchHeart(el){
+      score++;
+      document.getElementById('score').textContent = score;
+      el.remove();
+      if(score === TARGET) endGame(true);
+    }
+    function endGame(win){
+      clearInterval(interval); clearInterval(spawnInterval);
+      document.querySelectorAll('.heart-click').forEach(t=>t.remove());
+      const quest = document.getElementById('quest');
+      const area  = document.getElementById('gameArea');
+      if(win){
+        quest.textContent = 'Chúc mừng em! 🎉 Quà của anh đây!';
+        party();
+        const gift = document.createElement('div');
+        gift.innerHTML = `<div style="margin-top:20px;padding:15px;background:rgba(255,255,255,.3);border-radius:12px;">
+          💌 Anh yêu em nhiều lắm! <br>
+          🎂 Chúc em sinh nhật tràn đầy niềm vui và luôn bên anh nhé!
+        </div>`;
+        area.appendChild(gift);
+      }else{
+        quest.textContent = 'Hết giờ rồi! Thử lại nha 😊';
+        const btn = document.getElementById('startBtn');
+        btn.style.display = 'inline-block'; btn.textContent = 'Chơi lại';
       }
     }
-    function createHeart(){
-      const heart=document.createElement('div');
-      heart.innerHTML='❤';
-      heart.style.position='fixed';
-      heart.style.fontSize='24px';
-      heart.style.color=['#ff4d84','#ff8fa3','#ffb3c1'][Math.floor(Math.random()*3)];
-      heart.style.left=Math.random()*100+'vw';
-      heart.style.top='100vh';
-      heart.style.pointerEvents='none';
-      document.body.appendChild(heart);
-      // animate
-      let pos=100, rot=0, op=1;
-      const id=setInterval(()=>{
-        pos-=1.8; rot+=3; op-=0.008;
-        heart.style.top=pos+'vh';
-        heart.style.transform=`rotate(${rot}deg)`;
-        heart.style.opacity=op;
-        if(op<=0){clearInterval(id);heart.remove()}
-      },20)
+    function party(){
+      const js = document.createElement('script');
+      js.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js';
+      document.head.appendChild(js);
+      js.onload = () => confetti({particleCount:150,spread:90,origin:{y:0.6}});
     }
-    // Tự động bật vài trái tim khi vào trang
-    window.onload=()=>setTimeout(showHeart,800);
   </script>
 </body>
 </html>
