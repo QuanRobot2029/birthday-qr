@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Happy Birthday Em!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    /* Reset & font */
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      height:100vh;
+      background:linear-gradient(135deg,#ffe4f1 0%, #ffc2e0 100%);
+      font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      color:#fff;
+    }
+    /* Hộp nội dung */
+    .card{
+      background:rgba(255,255,255,.25);
+      backdrop-filter:blur(10px);
+      border-radius:20px;
+      padding:40px 30px;
+      max-width:90%;
+      width:420px;
+      box-shadow:0 8px 32px rgba(0,0,0,.15);
+      animation:fadeIn 1.2s ease;
+    }
+    h1{font-size:2.2em;margin-bottom:15px}
+    p{font-size:1.1em;margin-bottom:25px;line-height:1.5}
+    .btn{
+      display:inline-block;
+      background:#ff4d84;
+      color:#fff;
+      padding:12px 28px;
+      border:none;border-radius:30px;
+      font-size:1em;cursor:pointer;
+      transition:.3s;
+    }
+    .btn:hover{background:#ff1f69;transform:scale(1.05)}
+    /* Ảnh tròn */
+    .avatar{
+      width:130px;height:130px;
+      border-radius:50%;
+      object-fit:cover;
+      border:4px solid #fff;
+      margin-bottom:20px;
+    }
+    /* Bong bóng bay */
+    .balloon{
+      position:absolute;
+      width:90px;height:120px;
+      border-radius:80% 80% 80% 80%;
+      background:#ff4d84;
+      opacity:.75;
+      animation:float 7s ease-in-out infinite;
+    }
+    .balloon:nth-child(1){left:10%;background:#ff8fa3;animation-duration:6s}
+    .balloon:nth-child(2){left:30%;background:#ffb3c1;animation-duration:8s;animation-delay:1s}
+    .balloon:nth-child(3){right:30%;background:#ffccd5;animation-duration:7s;animation-delay:2s}
+    .balloon:nth-child(4){right:10%;background:#ff8fa3;animation-duration:9s}
+
+    @keyframes float{
+      0%,100%{transform:translateY(0) rotate(-3deg)}
+      50%{transform:translateY(-60vh) rotate(3deg)}
+    }
+    @keyframes fadeIn{
+      from{opacity:0;transform:scale(.9)}
+      to{opacity:1;transform:scale(1)}
+    }
+    /* Nhạc nền tự động (tùy chọn) */
+    audio{position:fixed;bottom:10px;right:10px;opacity:.6}
+  </style>
+</head>
+<body>
+  <!-- 4 trái bóng -->
+  <div class="balloon"></div>
+  <div class="balloon"></div>
+  <div class="balloon"></div>
+  <div class="balloon"></div>
+
+  <!-- Thẻ nội dung -->
+  <div class="card">
+    <img src="https://i.pravatar.cc/300?img=25" alt="avatar" class="avatar"/>
+    <h1>Happy Birthday, <span id="name">Bé iu</span>!</h1>
+    <p>Chúc em tuổi mới luôn cười thật tươi, học giỏi, xinh đẹp và bên anh mãi nhé!</p>
+    <button class="btn" onclick="showHeart()">Nhấn để nhận ♥</button>
+  </div>
+
+  <!-- Nhạc nền (tải file mp3 của bạn lên drive/gh rồi thay link) -->
+  <audio id="bgm" loop autoplay>
+    <source src="https://cdn.pixabay.com/download/audio/2022/02/21/audio_2c08bbed9c.mp3?filename=happy-birthday-to-you-piano-5527.mp3" type="audio/mpeg">
+    Trình duyệt không hỗ trợ audio.
+  </audio>
+
+  <script>
+    // Thay tên bạn gái
+    document.getElementById('name').textContent = 'Tên bạn gái';
+
+    // Tạo hiệu ứng trái tim bay lên khi nhấn nút
+    function showHeart(){
+      for(let i=0;i<30;i++){
+        createHeart();
+      }
+    }
+    function createHeart(){
+      const heart=document.createElement('div');
+      heart.innerHTML='❤';
+      heart.style.position='fixed';
+      heart.style.fontSize='24px';
+      heart.style.color=['#ff4d84','#ff8fa3','#ffb3c1'][Math.floor(Math.random()*3)];
+      heart.style.left=Math.random()*100+'vw';
+      heart.style.top='100vh';
+      heart.style.pointerEvents='none';
+      document.body.appendChild(heart);
+      // animate
+      let pos=100, rot=0, op=1;
+      const id=setInterval(()=>{
+        pos-=1.8; rot+=3; op-=0.008;
+        heart.style.top=pos+'vh';
+        heart.style.transform=`rotate(${rot}deg)`;
+        heart.style.opacity=op;
+        if(op<=0){clearInterval(id);heart.remove()}
+      },20)
+    }
+    // Tự động bật vài trái tim khi vào trang
+    window.onload=()=>setTimeout(showHeart,800);
+  </script>
+</body>
+</html>
